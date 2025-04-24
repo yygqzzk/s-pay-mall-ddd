@@ -35,6 +35,12 @@ spring:
 #  mapper-locations: classpath:/mybatis/mapper/*.xml
 #  config-location:  classpath:/mybatis/config/mybatis-config.xml
 
+# 微信公众号对接
+weixin:
+  config:
+    originalid: gh_df4993ddf264
+    token: yygqzzk
+
 # 日志
 logging:
   level:

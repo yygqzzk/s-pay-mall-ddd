@@ -4,6 +4,10 @@
 
 
 
+微信扫码登录DDD四色建模设计图
+
+![image-20250424195805833](https://yygqzzk.oss-cn-wuhan-lr.aliyuncs.com/typora-images/202504241958936.png)
+
 
 
 商品交易业务流程图
