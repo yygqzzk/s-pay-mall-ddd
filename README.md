@@ -1,10 +1,15 @@
-# xfg-frame-archetype - DDD 脚手架 - @小傅哥 v2.2
+微信扫码登录流程图
 
-- docker 使用文档：[https://bugstack.cn/md/road-map/docker.html](https://bugstack.cn/md/road-map/docker.html)
-- DDD 教程；
-  - [DDD 概念理论](https://bugstack.cn/md/road-map/ddd-guide-01.html)
-  - [DDD 建模方法](https://bugstack.cn/md/road-map/ddd-guide-02.html)
-  - [DDD 工程模型](https://bugstack.cn/md/road-map/ddd-guide-03.html)
-  - [DDD 架构设计](https://bugstack.cn/md/road-map/ddd.html)
-  - [DDD 建模案例](https://bugstack.cn/md/road-map/ddd-model.html)
+![image-20250422145855105](https://yygqzzk.oss-cn-wuhan-lr.aliyuncs.com/typora-images/202504221459187.png)
 
+
+
+
+
+商品交易业务流程图
+
+![image-202504221608031](https://yygqzzk.oss-cn-wuhan-lr.aliyuncs.com/typora-images/202504221608031.png)
+
+整体业务流程
+
+![image-20250423094325891](https://yygqzzk.oss-cn-wuhan-lr.aliyuncs.com/typora-images/202504230944398.png)
