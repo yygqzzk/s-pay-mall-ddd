@@ -1,0 +1,1 @@
+package com.yygqzzk.domain.auth.service;

@@ -1,5 +1,6 @@
 package com.yygqzzk.trigger.http;
 
+import com.yygqzzk.domain.auth.service.ILoginService;
 import com.yygqzzk.types.sdk.weixin.MessageTextEntity;
 import com.yygqzzk.types.sdk.weixin.SignatureUtil;
 import com.yygqzzk.types.sdk.weixin.XmlUtil;
@@ -7,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * 微信服务对接，对接地址：<a href="http://xfg-studio.natapp1.cc/api/v1/weixin/portal/receive">/api/v1/weixin/portal/receive</a>
@@ -23,6 +26,10 @@ public class WeixinPortalController {
     private String originalid;
     @Value("${weixin.config.token}")
     private String token;
+
+    @Resource
+    private ILoginService loginService;
+
 
     @GetMapping(value = "receive", produces = "text/plain;charset=utf-8")
     public String validate(@RequestParam(value = "signature", required = false) String signature,
@@ -58,6 +65,12 @@ public class WeixinPortalController {
             log.info("接收微信公众号信息请求{}开始 {}", openid, requestBody);
             // 消息转换
             MessageTextEntity message = XmlUtil.xmlToBean(requestBody, MessageTextEntity.class);
+
+            if("event".equals(message.getMsgType()) && "SCAN".equals(message.getEvent())) {
+                loginService.saveLoginState(message.getTicket(), openid);
+                return buildMessageTextEntity(openid,"登陆成功");
+            }
+
             return buildMessageTextEntity(openid, "你好，" + message.getContent());
         } catch (Exception e) {
             log.error("接收微信公众号信息请求{}失败 {}", openid, requestBody, e);

@@ -22,6 +22,20 @@
             <groupId>com.yygqzzk</groupId>
             <artifactId>s-pay-mall-ddd-domain</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>retrofit</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>converter-jackson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.retrofit2</groupId>
+            <artifactId>adapter-rxjava2</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>
