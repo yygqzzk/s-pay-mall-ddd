@@ -7,6 +7,7 @@ import com.yygqzzk.infrastructure.gateway.dto.WeixinQrCodeRequestDTO;
 import com.yygqzzk.infrastructure.gateway.dto.WeixinQrCodeResponseDTO;
 import com.yygqzzk.infrastructure.gateway.dto.WeixinTemplateMessageDTO;
 import com.yygqzzk.infrastructure.gateway.dto.WeixinTokenResponseDTO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import retrofit2.Call;
@@ -22,6 +23,7 @@ import java.util.Map;
  * @since 2025/4/24
  */
 @Service
+@RequiredArgsConstructor
 public class LoginPort implements ILoginPort {
 
     @Value("${weixin.config.app-id}")
@@ -31,11 +33,9 @@ public class LoginPort implements ILoginPort {
     @Value("${weixin.config.template_id}")
     String templateId;
 
-    @Resource
-    private Cache<String, String> weixinAccessToken;
+    private final Cache<String, String> weixinAccessToken;
 
-    @Resource
-    private IWeixinApiService weixinApiService;
+    private final IWeixinApiService weixinApiService;
 
 
     @Override
