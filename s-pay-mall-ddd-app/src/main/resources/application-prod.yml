@@ -1,5 +1,5 @@
 server:
-  port: 8091
+  port: 8080
 
 # 线程池配置
 thread:
@@ -12,27 +12,54 @@ thread:
         block-queue-size: 5000
         policy: CallerRunsPolicy
 
-# 数据库配置
-#spring:
-#  datasource:
-#    username: root
-#    password: 123456
-#    url: jdbc:mysql://127.0.0.1:3306/xfg_frame_archetype?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=UTC&useSSL=true
-#    driver-class-name: com.mysql.cj.jdbc.Driver
-#  hikari:
-#    pool-name: Retail_HikariCP
-#    minimum-idle: 15 #最小空闲连接数量
-#    idle-timeout: 180000 #空闲连接存活最大时间，默认600000（10分钟）
-#    maximum-pool-size: 25 #连接池最大连接数，默认是10
-#    auto-commit: true  #此属性控制从池返回的连接的默认自动提交行为,默认值：true
-#    max-lifetime: 1800000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
-#    connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
-#    connection-test-query: SELECT 1
-#  type: com.zaxxer.hikari.HikariDataSource
+# 数据库配置；启动时配置数据库资源信息
+spring:
+  datasource:
+    username: root
+    password: zzk123..
+    url: jdbc:mysql://mysql:3306/s_pay_mall?useUnicode=true&characterEncoding=utf8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&serverTimezone=Asia/Shanghai&useSSL=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  hikari:
+    pool-name: Retail_HikariCP
+    minimum-idle: 15 #最小空闲连接数量
+    idle-timeout: 180000 #空闲连接存活最大时间，默认600000（10分钟）
+    maximum-pool-size: 25 #连接池最大连接数，默认是10
+    auto-commit: true  #此属性控制从池返回的连接的默认自动提交行为,默认值：true
+    max-lifetime: 1800000 #此属性控制池中连接的最长生命周期，值0表示无限生命周期，默认1800000即30分钟
+    connection-timeout: 30000 #数据库连接超时时间,默认30秒，即30000
+    connection-test-query: SELECT 1
+  type: com.zaxxer.hikari.HikariDataSource
 
-#mybatis:
-#  mapper-locations: classpath:/mybatis/mapper/*.xml
-#  config-location:  classpath:/mybatis/config/mybatis-config.xml
+# MyBatis 配置【如需使用记得打开】
+mybatis:
+  mapper-locations: classpath:/mybatis/mapper/*.xml
+  config-location:  classpath:/mybatis/config/mybatis-config.xml
+
+# 微信公众号对接
+# 微信公众号对接
+weixin:
+  config:
+    originalid: gh_df4993ddf264
+    token: yygqzzk
+    app-id: wxbb04fb10e7792607
+    app-secret: b845d7b7269aa6653d6158eec5375876
+    template_id: 3YpG9eq6u3UVbbc3PvvBPGR6k-QBqCtVcqoZjfTFqQg
+
+
+# 支付宝支付 - 沙箱 https://opendocs.alipay.com/common/02kkv7
+alipay:
+  enabled: true
+  app_id: 2021000148615584
+  # 商户私钥
+  merchant_private_key: MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCAzu1Wy6QjTS3H4ehhqAEKcrmnn3RkFImlCPwvl5KhK9ltg6n/yIn3fdvrAPeXxzAoHoQ4yp3dJKIwqt2qc4hZc8gq28QwYT5e007DSdEDYshjT/VJkUKQopSevQ7hoaI/w7IxKrnffz0lqm/wOMON6GutfRTER7hB/hnj1evWct78oKNn/xmuapX6gA6hGfgPvwnYZN1mqsVLj3IGQRn5QxZYTue6Up1z1mZxkpW3R4jw/QxYc7CaZp1M5myJal777qj73qhaRlv6ZPVGAngnGy2jEHLfD7yM0luHzwdVDDL3x6ccf/1ZlgzUj9PCV0oASERvGlsvlLUwn57LxkOfAgMBAAECggEAMd9s9+FLQTvd0PnAPyeMl54KEkPkDegBz3umIUs/w9W1jvietuHPwZrirqAmPYcrNy1xpoeVDg3kGpHd1+R506DHzQhgcxcDzjVk1qpbGkOCMSnBYGW070lz3+51t5kcuDGuaekQJOAgLdhLFSj1Vpm6L2cxxjm6txqKrbOjZ9lu5z4R+syuL8C7NmpaKI7TGy8QmBqLWzgOhEcplZ9XrC1i34RLKRJsml1fuhjIk5V7kGqcJVcfvBivCjhnW6VJ9Z1yDXLnPcmg9KqPLD4UBIsHCh8CZbI0GiTC9Z22WqkDqwIM7jrc7gqPtMDUH8n58AnYUwNp5PkWS7P1pYD9cQKBgQDJnoGRduYYCtE+GcJ4CaqWljmSTepeEA3CETRO05EJ0gW22dTdt9TdCpCW/ZO35cpl5yv4CXNWky8z38gTAjY78INhM4TU6NfdHEyhB0EWQRYalvK0EugXR/b6MLXIb7DYJH36quQveJUN1vnphXdNYmhVVQpCeHm5k410liUVWQKBgQCjjPFyZp/ANax2Lsp5zKSU6q8qaU45Q8s2F3ZolwzyTkWvgh32i4UMit5CY3mrR8xNGVn8q91nXPncBj//64n+1lvRXOWbi33xpLSarRe3+AHpKF0teSEPSYywBJjG4JnzoMv9VPgNq6j+wV77wW3Q6ZUSiN6P5h5pCZJwVMbptwKBgQCnmmx7UCvWsKdgyGkxAFge9qLFTKAXsaC+Qy8ImDdpwn2dk1exOLBrT+0Cl6nEpfGq5JFYkAKhZZlHti/MHXqYOUf99aXml+lalbvd4PnqVhDZ6cG4kD7/m4NkWDnFdZO9Ghjf2E/4ZnUCHEOELL8QRU4WIat1tlD6Q/7DfE03gQKBgA6xmv+sOK4MJHJ5wbcvq5m1fAdTbrO2Y4t4kCrVZ1Rds+UQy6Ba6Jk34MAWL9gzmydSH8OTrVCcCda6uQVFJCDBIX6t2fMflTEgmxlKc9cTcRiBh92OBGpbMUifIRq9ExfQWoNoHuEbixNYTDBSMIuUcNA5e8Vx50mIkp+E/loBAoGBAKDK53oEm8NffVYKai2tqJ82XyDv7rMtMVDHUtpQ8rpfTWes48L1WtuSTYkhSnCZaHauJHIpBLv5VzycyfzvMEZGK8ZXqkz0amveVeKFDBw7CB4vUY5Op1XOyxrVcD4d2Lg1T1qUmo6e1tulxfPsrOqLYHkQBioztvMCCnhX02mI
+  # 支付宝商户公钥
+  alipay_public_key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhAf8pVswmtuLSUKvZVKtIa5LLUOhU59Ur8V7DIJsLUcyMj+q/nIHgOWGUHLDeiO7wVcAz4dSzRaRXeIihasDkUkPV2ob+S4FSRTLFQvwQESCQZi43/YHavlFTkeReUP9pbtcqUdvkGy8DUq6Qo0Oz2Grn1NHhEJxXp6J7RkMtHY9w9GncQSfVLd6hOO4x4tArGGXs+MPFwlwKM4zrAo6KMXeh+hqTWuF3UoYfwAsdfoDW52Gp5/JjvR12JS94A2+4hRQPRb35bqLkjWudmLefpHC63KRHpn7qJSUlEnntzPgzrsIak+Gpg/QYzKeR15NT1E/laYPKHLEXvKR+dxamwIDAQAB
+  # 服务器异步通知页面路径
+  notify_url: http://47.122.114.115:8080/api/v1/alipay/alipay_notify_url
+  # 页面跳转同步通知页面路径
+  return_url: https://github.com/yygqzzk
+  # 支付宝网关地址
+  gatewayUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
 
 # 日志
 logging:

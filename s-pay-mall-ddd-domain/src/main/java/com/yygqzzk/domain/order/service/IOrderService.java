@@ -3,6 +3,8 @@ package com.yygqzzk.domain.order.service;
 import com.yygqzzk.domain.order.model.entity.PayOrderEntity;
 import com.yygqzzk.domain.order.model.entity.ShopCartEntity;
 
+import java.util.List;
+
 /**
  * @author zzk
  * @version 1.0
@@ -11,4 +13,21 @@ import com.yygqzzk.domain.order.model.entity.ShopCartEntity;
  */
 public interface IOrderService {
     PayOrderEntity createOrder(ShopCartEntity shopCartReq) throws  Exception;
+
+    /**
+     * 改变订单状态为已支付
+     * @param orderId
+     */
+    void changeOrderPaySuccess(String orderId);
+
+
+    List<String> queryNoPayNotifyOrder();
+
+    List<String> queryTimeoutCloseOrderList();
+
+    /**
+     * 改变订单状态为已关闭
+     * @return
+     */
+    boolean changeOrderClose(String orderId);
 }

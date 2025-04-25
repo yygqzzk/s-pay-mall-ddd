@@ -29,11 +29,7 @@ public abstract class AbstractOrderService implements IOrderService {
     @Override
     public PayOrderEntity createOrder(ShopCartEntity shopCartEntity) throws Exception {
         // 1. 查询当前用户是否存在未支付订单或掉单订单
-
-        OrderEntity unpaidOrder = orderRepository.queryUnPayOrder(OrderEntity.builder()
-                .userId(shopCartEntity.getUserId())
-                .productId(shopCartEntity.getProductId())
-                .build());
+        OrderEntity unpaidOrder = orderRepository.queryUnPayOrder(shopCartEntity.getUserId(), shopCartEntity.getProductId());
         // 判断未支付订单和掉单情况
         if(null != unpaidOrder && OrderStatusVO.PAY_WAIT.getCode().equals(unpaidOrder.getStatus())){
             log.info("创建订单-存在，已存在未支付订单，userId: {} productId: {} orderId: ", unpaidOrder.getUserId(), shopCartEntity.getProductId(), unpaidOrder.getOrderId());
@@ -44,10 +40,10 @@ public abstract class AbstractOrderService implements IOrderService {
         } else if(null != unpaidOrder && OrderStatusVO.CREATE.getCode().equals(unpaidOrder.getStatus())){
             log.info("创建订单-存在，存在未创建支付单订单，创建支付单开始 userId:{} productId:{} orderId:{}", shopCartEntity.getUserId(), shopCartEntity.getProductId(), unpaidOrder.getOrderId());
             // 创建支付宝支付订单
-            OrderEntity prePayOrder = doPrepayOrder(unpaidOrder);
+            unpaidOrder = doPrepayOrder(unpaidOrder);
             return PayOrderEntity.builder()
-                    .orderId(prePayOrder.getOrderId())
-                    .payUrl(prePayOrder.getPayUrl())
+                    .orderId(unpaidOrder.getOrderId())
+                    .payUrl(unpaidOrder.getPayUrl())
                     .build();
         }
 
@@ -57,7 +53,8 @@ public abstract class AbstractOrderService implements IOrderService {
             log.error("未找到商品信息 productId: {}", shopCartEntity.getProductId());
             throw new Exception();
         }
-        OrderEntity orderEntity = CreateOrderAggregate.buildOrderEntity(productEntity.getProductId(), productEntity.getProductName());
+
+        OrderEntity orderEntity = CreateOrderAggregate.buildOrderEntity(productEntity.getProductId(), productEntity.getProductName(), productEntity.getPrice());
 
         CreateOrderAggregate orderAggregate = CreateOrderAggregate.builder()
                 .userId(shopCartEntity.getUserId())
@@ -65,12 +62,14 @@ public abstract class AbstractOrderService implements IOrderService {
                 .productEntity(productEntity)
                 .build();
 
+        log.info("创建新订单，创建支付单开始 userId:{} productId:{} orderId:{}", orderAggregate.getUserId(), orderEntity.getProductId(), orderEntity.getOrderId());
+
         this.doSaveOrder(orderAggregate);
         // 创建支付单
         // 此时订单支付状态为 CREATE
 
         // 创建支付宝支付连接, 并更新支付状态为 PAY_WAIT
-        OrderEntity payOrderEntity = doPrepayOrder(unpaidOrder);
+        OrderEntity payOrderEntity = doPrepayOrder(orderEntity);
 
         // 返回订单信息
         return PayOrderEntity.builder()

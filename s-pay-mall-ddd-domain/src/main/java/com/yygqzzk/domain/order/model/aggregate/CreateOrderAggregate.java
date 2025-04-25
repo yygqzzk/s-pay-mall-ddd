@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -25,11 +26,12 @@ public class CreateOrderAggregate {
     OrderEntity orderEntity;
     ProductEntity productEntity;
 
-    public static OrderEntity buildOrderEntity(String productId, String productName) {
+    public static OrderEntity buildOrderEntity(String productId, String productName, BigDecimal totalAmount) {
         return OrderEntity.builder()
                 .orderId(RandomStringUtils.randomNumeric(16))
                 .productId(productId)
                 .productName(productName)
+                .totalAmount(totalAmount)
                 .orderTime(new Date())
                 .status(OrderStatusVO.CREATE.getCode())
                 .build();

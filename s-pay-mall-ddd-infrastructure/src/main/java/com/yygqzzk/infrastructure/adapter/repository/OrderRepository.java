@@ -1,5 +1,8 @@
 package com.yygqzzk.infrastructure.adapter.repository;
 
+import com.alibaba.fastjson2.JSON;
+import com.google.common.eventbus.EventBus;
+import com.yygqzzk.domain.order.adapter.event.PaySuccessMessageEvent;
 import com.yygqzzk.domain.order.adapter.repository.IOrderRepository;
 import com.yygqzzk.domain.order.model.aggregate.CreateOrderAggregate;
 import com.yygqzzk.domain.order.model.entity.OrderEntity;
@@ -7,12 +10,15 @@ import com.yygqzzk.domain.order.model.entity.ProductEntity;
 import com.yygqzzk.domain.order.model.valobj.OrderStatusVO;
 import com.yygqzzk.infrastructure.dao.IOrderDao;
 import com.yygqzzk.infrastructure.dao.po.PayOrder;
+import com.yygqzzk.types.event.BaseEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author zzk
@@ -23,17 +29,21 @@ import java.util.Date;
 @RequiredArgsConstructor
 public class OrderRepository implements IOrderRepository {
     private final IOrderDao orderDao;
+    private final PaySuccessMessageEvent paySuccessMessageEvent;
+    private final EventBus eventBus;
+
     @Override
-    public OrderEntity queryUnPayOrder(OrderEntity orderEntity) {
+    public OrderEntity queryUnPayOrder(String userId, String productId) {
         PayOrder payOrder = PayOrder.builder()
-                .userId(orderEntity.getUserId())
-                .productId(orderEntity.getProductId())
+                .userId(userId)
+                .productId(productId)
                 .build();
 
         payOrder = orderDao.queryUnPayOrder(payOrder);
 
-        // 没有未支付订单，返回null
-        if (payOrder == null) {
+        // 没有未支付订单、订单付款已完成、订单已关闭，返回null
+        if (payOrder == null || OrderStatusVO.PAY_SUCCESS.getCode().equals(payOrder.getStatus()) ||
+                OrderStatusVO.CLOSE.getCode().equals(payOrder.getStatus())) {
             return null;
         }
 
@@ -65,6 +75,41 @@ public class OrderRepository implements IOrderRepository {
 
         orderDao.updateOrderPayInfo(payOrder);
     }
+
+    @Override
+    public void changeOrderPaySuccess(String orderId) {
+        PayOrder payOrder = PayOrder.builder()
+                .orderId(orderId)
+                .status(OrderStatusVO.PAY_SUCCESS.getCode())
+                .build();
+        orderDao.changeOrderPaySuccess(payOrder);
+
+        // 发送MQ消息
+        BaseEvent.EventMessage<PaySuccessMessageEvent.PaySuccessMessage> eventMessage = paySuccessMessageEvent.buildEventMessage(PaySuccessMessageEvent.PaySuccessMessage.builder().tradeNo(orderId).build());
+        PaySuccessMessageEvent.PaySuccessMessage paySuccessMessage = eventMessage.getData();
+
+        eventBus.post(JSON.toJSONString(paySuccessMessage));
+
+
+    }
+
+
+    @Override
+    public List<String> queryNoPayNotifyOrder() {
+        return orderDao.queryNoPayNotifyOrder();
+    }
+
+    @Override
+    public List<String> queryTimeoutCloseOrderList() {
+        return orderDao.queryTimeoutCloseOrderList();
+    }
+
+    @Override
+    public boolean changeOrderClose(String orderId) {
+        return orderDao.changeOrderClose(orderId);
+    }
+
+
 }
 
 

@@ -3,6 +3,8 @@ package com.yygqzzk.infrastructure.dao;
 import com.yygqzzk.infrastructure.dao.po.PayOrder;
 import org.apache.ibatis.annotations.Mapper;
 
+import java.util.List;
+
 /**
  * @author zzk
  * @version 1.0
@@ -16,4 +18,12 @@ public interface IOrderDao {
     PayOrder queryUnPayOrder(PayOrder payOrder);
 
     void updateOrderPayInfo(PayOrder payOrder);
+
+    void changeOrderPaySuccess(PayOrder payOrder);
+
+    List<String> queryTimeoutCloseOrderList();
+
+    boolean changeOrderClose(String orderId);
+
+    List<String> queryNoPayNotifyOrder();
 }

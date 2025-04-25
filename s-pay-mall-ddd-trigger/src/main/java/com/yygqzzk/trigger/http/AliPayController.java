@@ -42,16 +42,15 @@ public class AliPayController implements IPayService {
             String userId = createPayRequestDTO.getUserId();
             String productId = createPayRequestDTO.getProductId();
             // 下单
-            PayOrderEntity payOrderRes = orderService.createOrder(ShopCartEntity.builder()
+            PayOrderEntity payOrderEntity = orderService.createOrder(ShopCartEntity.builder()
                     .userId(userId)
                     .productId(productId)
                     .build());
-
-            log.info("商品下单，根据商品ID创建支付单完成 userId:{} productId:{} orderId:{}", userId, productId, payOrderRes.getOrderId());
+            log.info("商品下单，支付订单创建完成 userId:{} productId:{}", createPayRequestDTO.getUserId(), createPayRequestDTO.getUserId());
             return Response.<String>builder()
                     .code(Constants.ResponseCode.SUCCESS.getCode())
                     .info(Constants.ResponseCode.SUCCESS.getInfo())
-                    .data(payOrderRes.getPayUrl())
+                    .data(payOrderEntity.getPayUrl())
                     .build();
         } catch (Exception e) {
             log.error("商品下单，根据商品ID创建支付单失败 userId:{} productId:{}", createPayRequestDTO.getUserId(), createPayRequestDTO.getUserId(), e);
@@ -98,7 +97,7 @@ public class AliPayController implements IPayService {
         log.info("支付回调，买家付款时间: {}", params.get("gmt_payment"));
         log.info("支付回调，买家付款金额: {}", params.get("buyer_pay_amount"));
         log.info("支付回调，支付回调，更新订单 {}", tradeNo);
-
+        orderService.changeOrderPaySuccess(tradeNo);
         return "success";
     }
 }
