@@ -22,11 +22,9 @@ import java.util.Date;
 @Slf4j
 @RequiredArgsConstructor
 public abstract class AbstractOrderService implements IOrderService {
-
+    protected final IAlipayService alipayService;
     protected final IProductPort productPort;
     protected final IOrderRepository orderRepository;
-
-    public abstract void creatPayOrder();
 
     @Override
     public PayOrderEntity createOrder(ShopCartEntity shopCartEntity) throws Exception {
@@ -44,8 +42,13 @@ public abstract class AbstractOrderService implements IOrderService {
                     .payUrl(unpaidOrder.getPayUrl())
                     .build();
         } else if(null != unpaidOrder && OrderStatusVO.CREATE.getCode().equals(unpaidOrder.getStatus())){
-            // TODO
-
+            log.info("创建订单-存在，存在未创建支付单订单，创建支付单开始 userId:{} productId:{} orderId:{}", shopCartEntity.getUserId(), shopCartEntity.getProductId(), unpaidOrder.getOrderId());
+            // 创建支付宝支付订单
+            OrderEntity prePayOrder = doPrepayOrder(unpaidOrder);
+            return PayOrderEntity.builder()
+                    .orderId(prePayOrder.getOrderId())
+                    .payUrl(prePayOrder.getPayUrl())
+                    .build();
         }
 
         // 首次下单，查询商品、创建订单
@@ -64,16 +67,20 @@ public abstract class AbstractOrderService implements IOrderService {
 
         this.doSaveOrder(orderAggregate);
         // 创建支付单
-        // TODO
-        creatPayOrder();
+        // 此时订单支付状态为 CREATE
+
+        // 创建支付宝支付连接, 并更新支付状态为 PAY_WAIT
+        OrderEntity payOrderEntity = doPrepayOrder(unpaidOrder);
 
         // 返回订单信息
         return PayOrderEntity.builder()
-                .orderId(orderEntity.getOrderId())
-                .userId(orderEntity.getUserId())
-                .payUrl("暂无")
+                .orderId(payOrderEntity.getOrderId())
+                .userId(payOrderEntity.getUserId())
+                .payUrl(payOrderEntity.getPayUrl())
                 .build();
     }
+
+    public abstract OrderEntity doPrepayOrder(OrderEntity unpaidOrder) throws Exception;
 
     public abstract void doSaveOrder(CreateOrderAggregate orderAggregate);
 }

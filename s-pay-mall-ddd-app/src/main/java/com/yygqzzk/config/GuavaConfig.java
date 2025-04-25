@@ -20,7 +20,7 @@ public class GuavaConfig {
     @Bean(name = "openidToken")
     public Cache<String, String> openidToken() {
         return CacheBuilder.newBuilder()
-                .expireAfterWrite(1, TimeUnit.HOURS)
+                .expireAfterWrite(5, TimeUnit.MINUTES)
                 .build();
     }
 

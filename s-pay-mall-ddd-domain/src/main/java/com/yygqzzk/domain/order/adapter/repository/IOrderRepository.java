@@ -12,4 +12,6 @@ public interface IOrderRepository {
     OrderEntity queryUnPayOrder(OrderEntity orderEntity);
 
     void doSaveOrder(CreateOrderAggregate orderAggregate);
+
+    void updateOrderPayInfo(OrderEntity orderEntity);
 }

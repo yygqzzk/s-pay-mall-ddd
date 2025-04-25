@@ -57,6 +57,14 @@ public class OrderRepository implements IOrderRepository {
                 .status(OrderStatusVO.CREATE.getCode())
                 .build());
     }
+
+    @Override
+    public void updateOrderPayInfo(OrderEntity orderEntity) {
+        PayOrder payOrder = PayOrder.builder().build();
+        BeanUtils.copyProperties(orderEntity, payOrder);
+
+        orderDao.updateOrderPayInfo(payOrder);
+    }
 }
 
 
