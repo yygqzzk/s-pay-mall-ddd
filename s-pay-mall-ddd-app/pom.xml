@@ -88,6 +88,8 @@
             <groupId>com.yygqzzk</groupId>
             <artifactId>s-pay-mall-ddd-infrastructure</artifactId>
         </dependency>
+
+
     </dependencies>
 
     <build>

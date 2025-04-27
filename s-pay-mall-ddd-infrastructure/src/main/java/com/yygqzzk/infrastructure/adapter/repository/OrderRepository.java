@@ -29,8 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderRepository implements IOrderRepository {
     private final IOrderDao orderDao;
-    private final PaySuccessMessageEvent paySuccessMessageEvent;
-    private final EventBus eventBus;
+
 
     @Override
     public OrderEntity queryUnPayOrder(String userId, String productId) {
@@ -77,20 +76,20 @@ public class OrderRepository implements IOrderRepository {
     }
 
     @Override
+    public OrderEntity queryByOrderId(String orderId) {
+        PayOrder payOrder = orderDao.queryByOrderId(orderId);
+        OrderEntity orderEntity = OrderEntity.builder().build();
+        BeanUtils.copyProperties(payOrder, orderEntity);
+        return orderEntity;
+    }
+
+    @Override
     public void changeOrderPaySuccess(String orderId) {
         PayOrder payOrder = PayOrder.builder()
                 .orderId(orderId)
                 .status(OrderStatusVO.PAY_SUCCESS.getCode())
                 .build();
         orderDao.changeOrderPaySuccess(payOrder);
-
-        // 发送MQ消息
-        BaseEvent.EventMessage<PaySuccessMessageEvent.PaySuccessMessage> eventMessage = paySuccessMessageEvent.buildEventMessage(PaySuccessMessageEvent.PaySuccessMessage.builder().tradeNo(orderId).build());
-        PaySuccessMessageEvent.PaySuccessMessage paySuccessMessage = eventMessage.getData();
-
-        eventBus.post(JSON.toJSONString(paySuccessMessage));
-
-
     }
 
 

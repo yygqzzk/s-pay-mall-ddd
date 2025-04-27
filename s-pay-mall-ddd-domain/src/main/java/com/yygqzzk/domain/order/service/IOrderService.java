@@ -3,7 +3,9 @@ package com.yygqzzk.domain.order.service;
 import com.yygqzzk.domain.order.model.entity.PayOrderEntity;
 import com.yygqzzk.domain.order.model.entity.ShopCartEntity;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zzk
@@ -20,6 +22,7 @@ public interface IOrderService {
      */
     void changeOrderPaySuccess(String orderId);
 
+    void sendOrderPaySuccessEvent(Map<String,String> params);
 
     List<String> queryNoPayNotifyOrder();
 
@@ -30,4 +33,6 @@ public interface IOrderService {
      * @return
      */
     boolean changeOrderClose(String orderId);
+
+
 }

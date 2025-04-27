@@ -15,6 +15,7 @@ public interface IOrderRepository {
     void doSaveOrder(CreateOrderAggregate orderAggregate);
 
     void updateOrderPayInfo(OrderEntity orderEntity);
+    OrderEntity queryByOrderId(String orderId);
 
     void changeOrderPaySuccess(String orderId);
 

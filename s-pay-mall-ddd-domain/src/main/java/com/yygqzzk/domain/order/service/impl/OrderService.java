@@ -1,5 +1,8 @@
 package com.yygqzzk.domain.order.service.impl;
 
+import com.alibaba.fastjson2.JSON;
+import com.google.common.eventbus.EventBus;
+import com.yygqzzk.domain.order.adapter.event.PaySuccessMessageEvent;
 import com.yygqzzk.domain.order.adapter.port.IProductPort;
 import com.yygqzzk.domain.order.adapter.repository.IOrderRepository;
 import com.yygqzzk.domain.order.model.aggregate.CreateOrderAggregate;
@@ -7,11 +10,12 @@ import com.yygqzzk.domain.order.model.entity.OrderEntity;
 import com.yygqzzk.domain.order.model.valobj.OrderStatusVO;
 import com.yygqzzk.domain.order.service.AbstractOrderService;
 import com.yygqzzk.domain.order.service.IAlipayService;
+import com.yygqzzk.types.event.BaseEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author zzk
@@ -23,8 +27,8 @@ import java.util.List;
 public class OrderService extends AbstractOrderService {
 
 
-    public OrderService(IAlipayService alipayService, IProductPort productPort, IOrderRepository orderRepository) {
-        super(alipayService, productPort, orderRepository);
+    public OrderService(IAlipayService alipayService, IProductPort productPort, IOrderRepository orderRepository, PaySuccessMessageEvent paySuccessMessageEvent, EventBus eventBus) {
+        super(alipayService, productPort, orderRepository, paySuccessMessageEvent, eventBus);
     }
 
     @Override
@@ -50,6 +54,22 @@ public class OrderService extends AbstractOrderService {
     }
 
     @Override
+    public void sendOrderPaySuccessEvent(Map<String, String> params) {
+        OrderEntity orderEntity = orderRepository.queryByOrderId(params.get("out_trade_no"));
+        // 发送MQ消息
+        BaseEvent.EventMessage<PaySuccessMessageEvent.PaySuccessMessage> eventMessage = paySuccessMessageEvent.buildEventMessage(PaySuccessMessageEvent.PaySuccessMessage.builder()
+                .userId(orderEntity.getUserId())
+                .tradeNo(params.get("out_trade_no"))
+                .payTime(params.get("gmt_payment"))
+                .productName(params.get("subject"))
+                .totalAmount(params.get("total_amount"))
+                .build());
+        PaySuccessMessageEvent.PaySuccessMessage paySuccessMessage = eventMessage.getData();
+
+        eventBus.post(JSON.toJSONString(paySuccessMessage));
+    }
+
+    @Override
     public List<String> queryNoPayNotifyOrder() {
         return orderRepository.queryNoPayNotifyOrder();
     }
@@ -63,6 +83,8 @@ public class OrderService extends AbstractOrderService {
     public boolean changeOrderClose(String orderId) {
         return orderRepository.changeOrderClose(orderId);
     }
+
+
 }
 
 

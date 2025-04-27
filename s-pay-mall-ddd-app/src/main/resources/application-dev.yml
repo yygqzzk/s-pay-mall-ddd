@@ -43,7 +43,8 @@ weixin:
     token: yygqzzk
     app-id: wxbb04fb10e7792607
     app-secret: b845d7b7269aa6653d6158eec5375876
-    template_id: 3YpG9eq6u3UVbbc3PvvBPGR6k-QBqCtVcqoZjfTFqQg
+    login_template_id: SmF7w-dRc5RW0PFtRfutTxFuPReka92vmAQuzWMlycs
+    pay_template_id: LT5c431CR8JhKxpb-8YIbOOH0O89Z7wLVGNNvp_s39c
 
 
 # 支付宝支付 - 沙箱 https://opendocs.alipay.com/common/02kkv7

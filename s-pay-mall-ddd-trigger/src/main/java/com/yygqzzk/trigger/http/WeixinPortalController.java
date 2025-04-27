@@ -1,6 +1,7 @@
 package com.yygqzzk.trigger.http;
 
 import com.yygqzzk.domain.auth.service.ILoginService;
+import com.yygqzzk.types.enums.WeixinMessageEvent;
 import com.yygqzzk.types.sdk.weixin.MessageTextEntity;
 import com.yygqzzk.types.sdk.weixin.SignatureUtil;
 import com.yygqzzk.types.sdk.weixin.XmlUtil;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 微信服务对接，对接地址：<a href="http://xfg-studio.natapp1.cc/api/v1/weixin/portal/receive">/api/v1/weixin/portal/receive</a>
@@ -62,16 +64,28 @@ public class WeixinPortalController {
                        @RequestParam(name = "encrypt_type", required = false) String encType,
                        @RequestParam(name = "msg_signature", required = false) String msgSignature) {
         try {
-            log.info("接收微信公众号信息请求{}开始 {}", openid, requestBody);
+            log.info("接收微信公众号信息请求{}开始", openid);
             // 消息转换
-            MessageTextEntity message = XmlUtil.xmlToBean(requestBody, MessageTextEntity.class);
 
-            if("event".equals(message.getMsgType()) && "SCAN".equals(message.getEvent())) {
+            MessageTextEntity message = null;
+
+            message = XmlUtil.xmlToBean(requestBody, MessageTextEntity.class);
+
+
+            if("event".equals(message.getMsgType()) && WeixinMessageEvent.SCAN.getCode().equalsIgnoreCase(message.getEvent())) {
+                // 保存用户登录ticket, openid, 登录ip
                 loginService.saveLoginState(message.getTicket(), openid);
-                return buildMessageTextEntity(openid,"登陆成功");
+                return buildMessageTextEntity(openid,"登陆成功 (๑´ㅂ`๑)");
             }
 
-            return buildMessageTextEntity(openid, "你好，" + message.getContent());
+            // 用户关注公众号
+            if("event".equals(message.getMsgType()) && WeixinMessageEvent.SUBSCRIBE.getCode().equalsIgnoreCase(message.getEvent())) {
+                String hello = "感谢您的关注，(*´∀`)~♥";
+                return buildMessageTextEntity(openid,hello);
+            }
+
+
+            return buildMessageTextEntity(openid, "（¯﹃¯）");
         } catch (Exception e) {
             log.error("接收微信公众号信息请求{}失败 {}", openid, requestBody, e);
             return "";

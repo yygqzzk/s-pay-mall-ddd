@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author zzk
@@ -28,6 +29,8 @@ public class LoginController implements IAuthService {
     @Resource
     private ILoginService loginService;
 
+    @Resource
+    private HttpServletRequest request;
 
     /**
      * http://yygqzzk.natapp1.cc/api/v1/login/weixin_qrcode_ticket
@@ -38,6 +41,7 @@ public class LoginController implements IAuthService {
     public Response<String> weixinQrCodeTicket() {
         try {
             String qrCodeTicket = loginService.createQrCodeTicket();
+            loginService.saveLoginIpinfo(qrCodeTicket, request.getHeader("x-real-ip"));
             log.info("生成微信扫码登录 ticket: {}", qrCodeTicket);
             return Response.<String>builder()
                     .code(Constants.ResponseCode.SUCCESS.getCode())

@@ -2,6 +2,7 @@ package com.yygqzzk.infrastructure.dao;
 
 import com.yygqzzk.infrastructure.dao.po.PayOrder;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -26,4 +27,7 @@ public interface IOrderDao {
     boolean changeOrderClose(String orderId);
 
     List<String> queryNoPayNotifyOrder();
+
+
+    PayOrder queryByOrderId(String orderId);
 }

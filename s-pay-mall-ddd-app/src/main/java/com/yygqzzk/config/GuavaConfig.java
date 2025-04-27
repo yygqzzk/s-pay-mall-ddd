@@ -22,7 +22,14 @@ public class GuavaConfig {
     @Bean(name = "openidToken")
     public Cache<String, String> openidToken() {
         return CacheBuilder.newBuilder()
-                .expireAfterWrite(5, TimeUnit.MINUTES)
+                .expireAfterWrite(30, TimeUnit.MINUTES)
+                .build();
+    }
+
+    @Bean(name = "loginIp")
+    public Cache<String, String> loginIp() {
+        return CacheBuilder.newBuilder()
+                .expireAfterWrite(30, TimeUnit.MINUTES)
                 .build();
     }
 

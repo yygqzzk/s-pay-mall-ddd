@@ -1,5 +1,7 @@
 package com.yygqzzk.domain.order.service;
 
+import com.google.common.eventbus.EventBus;
+import com.yygqzzk.domain.order.adapter.event.PaySuccessMessageEvent;
 import com.yygqzzk.domain.order.adapter.port.IProductPort;
 import com.yygqzzk.domain.order.adapter.repository.IOrderRepository;
 import com.yygqzzk.domain.order.model.aggregate.CreateOrderAggregate;
@@ -10,9 +12,6 @@ import com.yygqzzk.domain.order.model.entity.ShopCartEntity;
 import com.yygqzzk.domain.order.model.valobj.OrderStatusVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
-
-import java.util.Date;
 
 /**
  * @author zzk
@@ -25,6 +24,8 @@ public abstract class AbstractOrderService implements IOrderService {
     protected final IAlipayService alipayService;
     protected final IProductPort productPort;
     protected final IOrderRepository orderRepository;
+    protected final PaySuccessMessageEvent paySuccessMessageEvent;
+    protected final EventBus eventBus;
 
     @Override
     public PayOrderEntity createOrder(ShopCartEntity shopCartEntity) throws Exception {
@@ -48,11 +49,14 @@ public abstract class AbstractOrderService implements IOrderService {
         }
 
         // 首次下单，查询商品、创建订单
+        // 验证商品Id是否存在
         ProductEntity productEntity = productPort.queryProductByProductId(shopCartEntity.getProductId());
         if(productEntity == null){
             log.error("未找到商品信息 productId: {}", shopCartEntity.getProductId());
             throw new Exception();
         }
+        // TODO 拓展userId身份信息校验，验证UserId是否存在
+
 
         OrderEntity orderEntity = CreateOrderAggregate.buildOrderEntity(productEntity.getProductId(), productEntity.getProductName(), productEntity.getPrice());
 

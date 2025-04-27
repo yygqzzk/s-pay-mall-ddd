@@ -1,13 +1,17 @@
 package com.yygqzzk.trigger.http;
 
+import com.alibaba.fastjson2.JSON;
 import com.alipay.api.internal.util.AlipaySignature;
+import com.google.common.eventbus.EventBus;
 import com.yygqzzk.api.IPayService;
 import com.yygqzzk.api.dto.CreatePayRequestDTO;
 import com.yygqzzk.api.response.Response;
+import com.yygqzzk.domain.order.adapter.event.PaySuccessMessageEvent;
 import com.yygqzzk.domain.order.model.entity.PayOrderEntity;
 import com.yygqzzk.domain.order.model.entity.ShopCartEntity;
 import com.yygqzzk.domain.order.service.IOrderService;
 import com.yygqzzk.types.common.Constants;
+import com.yygqzzk.types.event.BaseEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +37,7 @@ public class AliPayController implements IPayService {
 
     @Resource
     private IOrderService orderService;
+
 
     @RequestMapping(value = "create_pay_order", method =  RequestMethod.POST)
     @Override
@@ -98,6 +103,8 @@ public class AliPayController implements IPayService {
         log.info("支付回调，买家付款金额: {}", params.get("buyer_pay_amount"));
         log.info("支付回调，支付回调，更新订单 {}", tradeNo);
         orderService.changeOrderPaySuccess(tradeNo);
+        orderService.sendOrderPaySuccessEvent(params);
+
         return "success";
     }
 }

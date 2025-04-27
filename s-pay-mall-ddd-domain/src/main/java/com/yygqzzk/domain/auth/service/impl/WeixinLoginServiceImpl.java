@@ -22,6 +22,10 @@ public class WeixinLoginServiceImpl implements ILoginService {
     private Cache<String, String> openidToken;
 
     @Resource
+    private Cache<String, String> loginIp;
+
+
+    @Resource
     private ILoginPort loginPort;
 
 
@@ -38,9 +42,14 @@ public class WeixinLoginServiceImpl implements ILoginService {
     @Override
     public void saveLoginState(String ticket, String openid) throws IOException {
         openidToken.put(ticket, openid);
-        // 发送模板消息
         loginPort.sendLoginTemplate(ticket, openid);
     }
+
+    @Override
+    public void saveLoginIpinfo(String ticket, String ip) throws IOException {
+        loginIp.put(ticket, ip);
+    }
+
 }
 
 

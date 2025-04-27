@@ -59,7 +59,9 @@
         ORDER BY id ASC
         LIMIT 10
     </select>
-
+    <select id="queryByOrderId" resultMap="dataMap">
+        select * from pay_order where order_id = #{orderId}
+    </select>
 
 
 </mapper>

@@ -43,7 +43,8 @@ weixin:
     token: yygqzzk
     app-id: wxbb04fb10e7792607
     app-secret: b845d7b7269aa6653d6158eec5375876
-    template_id: 3YpG9eq6u3UVbbc3PvvBPGR6k-QBqCtVcqoZjfTFqQg
+    login_template_id: SmF7w-dRc5RW0PFtRfutTxFuPReka92vmAQuzWMlycs
+    pay_template_id: LT5c431CR8JhKxpb-8YIbOOH0O89Z7wLVGNNvp_s39c
 
 
 # 支付宝支付 - 沙箱 https://opendocs.alipay.com/common/02kkv7
@@ -55,7 +56,7 @@ alipay:
   # 支付宝商户公钥
   alipay_public_key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhAf8pVswmtuLSUKvZVKtIa5LLUOhU59Ur8V7DIJsLUcyMj+q/nIHgOWGUHLDeiO7wVcAz4dSzRaRXeIihasDkUkPV2ob+S4FSRTLFQvwQESCQZi43/YHavlFTkeReUP9pbtcqUdvkGy8DUq6Qo0Oz2Grn1NHhEJxXp6J7RkMtHY9w9GncQSfVLd6hOO4x4tArGGXs+MPFwlwKM4zrAo6KMXeh+hqTWuF3UoYfwAsdfoDW52Gp5/JjvR12JS94A2+4hRQPRb35bqLkjWudmLefpHC63KRHpn7qJSUlEnntzPgzrsIak+Gpg/QYzKeR15NT1E/laYPKHLEXvKR+dxamwIDAQAB
   # 服务器异步通知页面路径
-  notify_url: http://47.122.114.115:8080/api/v1/alipay/alipay_notify_url
+  notify_url: http://yygqzzk.xyz/api/v1/alipay/alipay_notify_url
   # 页面跳转同步通知页面路径
   return_url: https://github.com/yygqzzk
   # 支付宝网关地址

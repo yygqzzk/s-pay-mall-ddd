@@ -52,7 +52,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", function() {
         // 获取二维码 ticket
-        fetch('http://yygqzzk.natapp1.cc/api/v1/login/weixin_qrcode_ticket')
+        fetch('http://yygqzzk.xyz:8080/api/v1/login/weixin_qrcode_ticket')
             .then(response => response.json())
             .then(data => {
                 if (data.code === "0000") {
@@ -73,14 +73,14 @@
             });
 
         function checkLoginStatus(ticket, intervalId) {
-            fetch(`http://yygqzzk.natapp1.cc/api/v1/login/check_login?ticket=${ticket}`)
+            fetch(`http://yygqzzk.xyz:8080/api/v1/login/check_login?ticket=${ticket}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.code === "0000") {
                         console.info("login success");
                         // 停止轮询
                         clearInterval(intervalId);
-                        // 保存登录 token 到 cookie，设置有效期为30天
+                        // 保存登录 token 到 cookie，设置有效期为30分钟
                         setCookie('loginToken', data.data, 30);
                         // 在这里可以重定向到登录后的页面
                         window.location.href = 'index.html'; // 假设登录成功后跳转到首页
@@ -93,9 +93,9 @@
                 });
         }
 
-        function setCookie(name, value, days) {
+        function setCookie(name, value, minutes) {
             const date = new Date();
-            date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+            date.setTime(date.getTime() + (minutes * 60 * 1000 * 30));
             const expires = "expires=" + date.toUTCString();
             document.cookie = name + "=" + value + ";" + expires + ";path=/";
         }

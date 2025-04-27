@@ -1,28 +1,26 @@
 package com.yygqzzk.infrastructure.gateway.dto;
 
-import lombok.NoArgsConstructor;
-
 import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author zzk
- * @version 1.0
- * @since 2025/4/26
+ * @author Fuzhengwei bugstack.cn @小傅哥
+ * @description 微信模板消息
+ * @create 2024-07-23 07:49
  */
-@NoArgsConstructor
-public abstract class WeixinTemplateMessageDTO {
+public class WeixinPayTemplateMessageDTO extends WeixinTemplateMessageDTO {
+
     private String touser = "or0Ab6ivwmypESVp_bYuk92T6SvU";
     private String template_id = "GLlAM-Q4jdgsktdNd35hnEbHVam2mwsW2YWuxDhpQkU";
     private String url = "https://weixin.qq.com";
     private Map<String, Map<String, String>> data = new HashMap<>();
 
-    public WeixinTemplateMessageDTO(String touser, String template_id) {
+    public WeixinPayTemplateMessageDTO(String touser, String template_id) {
         this.touser = touser;
         this.template_id = template_id;
     }
 
-    public void put(WeixinPayTemplateMessageDTO.TemplateKey key, String value) {
+    public void put(TemplateKey key, String value) {
         data.put(key.getCode(), new HashMap<String, String>() {
             private static final long serialVersionUID = 7092338402387318563L;
 
@@ -32,7 +30,7 @@ public abstract class WeixinTemplateMessageDTO {
         });
     }
 
-    public static void put(Map<String, Map<String, String>> data, WeixinPayTemplateMessageDTO.TemplateKey key, String value) {
+    public static void put(Map<String, Map<String, String>> data, TemplateKey key, String value) {
         data.put(key.getCode(), new HashMap<String, String>() {
             private static final long serialVersionUID = 7092338402387318563L;
 
@@ -44,7 +42,11 @@ public abstract class WeixinTemplateMessageDTO {
 
 
     public enum TemplateKey {
-        ;
+        SUBJECT("subject","商品名称"),
+        AMOUNT("amount", "支付金额"),
+        PAYTIME("payTime", "支付时间");
+
+
         private String code;
         private String desc;
 
@@ -102,8 +104,5 @@ public abstract class WeixinTemplateMessageDTO {
     public void setData(Map<String, Map<String, String>> data) {
         this.data = data;
     }
+
 }
-
-
-
-
