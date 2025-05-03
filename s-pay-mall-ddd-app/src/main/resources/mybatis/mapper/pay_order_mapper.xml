@@ -13,23 +13,29 @@
         <result column="status" property="status"/>
         <result column="pay_url" property="payUrl"/>
         <result column="pay_time" property="payTime"/>
+        <result column="market_type" property="marketType"/>
+        <result column="market_deduction_amount" property="marketDeductionAmount"/>
+        <result column="pay_amount" property="payAmount"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
     <insert id="insert" parameterType="com.yygqzzk.infrastructure.dao.po.PayOrder">
         insert into pay_order(user_id, product_id, product_name, order_id, order_time,
-        total_amount, status, create_time, update_time)
+        total_amount, status, market_type, market_deduction_amount, pay_amount, create_time, update_time)
         values(#{userId}, #{productId}, #{productName}, #{orderId}, #{orderTime},
-        #{totalAmount}, #{status}, now(), now())
+        #{totalAmount}, #{status}, #{marketType}, #{marketDeductionAmount}, #{payAmount}, now(), now())
     </insert>
     <update id="updateOrderPayInfo">
-        update pay_order set pay_url = #{payUrl}, status = #{status}, update_time = now()
+        update pay_order
+        set pay_url = #{payUrl}, status = #{status}, update_time = now(),
+            market_type = #{marketType}, market_deduction_amount = #{marketDeductionAmount}, pay_amount = #{payAmount}
         where order_id = #{orderId}
     </update>
 
     <select id="queryUnPayOrder" parameterType="com.yygqzzk.infrastructure.dao.po.PayOrder" resultMap="dataMap">
-        select product_id, product_name, order_id, order_time, total_amount, status, pay_url
+        select product_id, product_name, order_id, order_time, total_amount, status, pay_url,
+               market_type, market_deduction_amount, pay_amount
         from pay_order
         where user_id = #{userId} and product_id = #{productId}
         order by id desc
@@ -59,8 +65,11 @@
         ORDER BY id ASC
         LIMIT 10
     </select>
-    <select id="queryByOrderId" resultMap="dataMap">
-        select * from pay_order where order_id = #{orderId}
+    <select id="queryByOrderId" resultMap="dataMap" parameterType="java.lang.String">
+        select user_id, product_id, product_name, order_id, order_time,
+               total_amount, status, market_type, market_deduction_amount, pay_amount
+        from pay_order
+        where order_id = #{orderId};
     </select>
 
 

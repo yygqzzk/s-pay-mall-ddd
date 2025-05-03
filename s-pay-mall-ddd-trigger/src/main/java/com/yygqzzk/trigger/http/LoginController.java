@@ -41,7 +41,7 @@ public class LoginController implements IAuthService {
     public Response<String> weixinQrCodeTicket() {
         try {
             String qrCodeTicket = loginService.createQrCodeTicket();
-            loginService.saveLoginIpinfo(qrCodeTicket, request.getHeader("x-real-ip"));
+            loginService.saveLoginIpinfo(qrCodeTicket, request.getRemoteAddr());
             log.info("生成微信扫码登录 ticket: {}", qrCodeTicket);
             return Response.<String>builder()
                     .code(Constants.ResponseCode.SUCCESS.getCode())

@@ -2,6 +2,8 @@ package com.yygqzzk.domain.order.adapter.repository;
 
 import com.yygqzzk.domain.order.model.aggregate.CreateOrderAggregate;
 import com.yygqzzk.domain.order.model.entity.OrderEntity;
+import com.yygqzzk.domain.order.model.entity.PayOrderEntity;
+import com.yygqzzk.domain.order.model.entity.ShopCartEntity;
 
 import java.util.List;
 
@@ -14,8 +16,7 @@ public interface IOrderRepository {
 
     void doSaveOrder(CreateOrderAggregate orderAggregate);
 
-    void updateOrderPayInfo(OrderEntity orderEntity);
-    OrderEntity queryByOrderId(String orderId);
+    void updateOrderPayInfo(PayOrderEntity payOrderEntity);
 
     void changeOrderPaySuccess(String orderId);
 
@@ -25,5 +26,7 @@ public interface IOrderRepository {
 
     boolean changeOrderClose(String orderId);
 
-    OrderEntity queryUnPayOrder(String userId, String productId);
+    OrderEntity queryUnPayOrder(ShopCartEntity shopCartEntity);
+
+    PayOrderEntity queryPayOrderByOrderId(String orderId);
 }

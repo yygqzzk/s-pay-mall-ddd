@@ -67,3 +67,16 @@ logging:
   level:
     root: info
   config: classpath:logback-spring.xml
+
+app:
+  config:
+    # 版本，方便通过接口版本升级
+    api-version: v1
+    # 跨域，开发阶段设置为 * 不限制
+    cross-origin: '*'
+    # SC 渠道配置 - 拼团对接渠道值、回调通知
+    group-buy-market:
+      api-url: http://127.0.0.1:8090/api/v1/gbm/
+      notify-url: http://127.0.0.1:8090/api/v1/test/group_buy_notify
+      source: s01
+      channel: c01

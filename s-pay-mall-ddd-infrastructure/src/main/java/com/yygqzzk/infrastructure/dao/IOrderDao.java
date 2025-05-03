@@ -28,6 +28,5 @@ public interface IOrderDao {
 
     List<String> queryNoPayNotifyOrder();
 
-
     PayOrder queryByOrderId(String orderId);
 }

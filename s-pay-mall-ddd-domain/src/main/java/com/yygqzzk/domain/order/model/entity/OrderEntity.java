@@ -1,5 +1,6 @@
 package com.yygqzzk.domain.order.model.entity;
 
+import com.yygqzzk.domain.order.model.valobj.OrderStatusVO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,18 +19,20 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderEntity {
-    private Long id;
-    private String userId;
     private String productId;
     private String productName;
     private String orderId;
     private Date orderTime;
     private BigDecimal totalAmount;
-    private String status;
+    private OrderStatusVO orderStatusVO;
     private String payUrl;
-    private Date payTime;
-    private Date createTime;
-    private Date updateTime;
+    // 营销类型；0无营销、1拼团营销
+    private Integer marketType;
+    // 营销金额；优惠金额
+    private BigDecimal marketDeductionAmount;
+    // 支付金额
+    private BigDecimal payAmount;
+
 }
 
 

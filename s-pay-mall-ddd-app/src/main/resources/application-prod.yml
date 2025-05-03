@@ -56,7 +56,7 @@ alipay:
   # 支付宝商户公钥
   alipay_public_key: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAhAf8pVswmtuLSUKvZVKtIa5LLUOhU59Ur8V7DIJsLUcyMj+q/nIHgOWGUHLDeiO7wVcAz4dSzRaRXeIihasDkUkPV2ob+S4FSRTLFQvwQESCQZi43/YHavlFTkeReUP9pbtcqUdvkGy8DUq6Qo0Oz2Grn1NHhEJxXp6J7RkMtHY9w9GncQSfVLd6hOO4x4tArGGXs+MPFwlwKM4zrAo6KMXeh+hqTWuF3UoYfwAsdfoDW52Gp5/JjvR12JS94A2+4hRQPRb35bqLkjWudmLefpHC63KRHpn7qJSUlEnntzPgzrsIak+Gpg/QYzKeR15NT1E/laYPKHLEXvKR+dxamwIDAQAB
   # 服务器异步通知页面路径
-  notify_url: http://yygqzzk.xyz/api/v1/alipay/alipay_notify_url
+  notify_url: http://yygqzzk.xyz:8080/api/v1/alipay/alipay_notify_url
   # 页面跳转同步通知页面路径
   return_url: https://github.com/yygqzzk
   # 支付宝网关地址
@@ -65,5 +65,5 @@ alipay:
 # 日志
 logging:
   level:
-    root: info
+    root: error
   config: classpath:logback-spring.xml
