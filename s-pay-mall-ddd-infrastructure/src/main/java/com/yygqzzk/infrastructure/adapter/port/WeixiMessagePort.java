@@ -1,6 +1,7 @@
 package com.yygqzzk.infrastructure.adapter.port;
 
 import com.google.common.cache.Cache;
+import com.yygqzzk.domain.order.adapter.event.PaySuccessMessageEvent;
 import com.yygqzzk.domain.order.adapter.port.IWeixinMessagePort;
 import com.yygqzzk.infrastructure.gateway.IWeixinApiService;
 import com.yygqzzk.infrastructure.gateway.dto.WeixinPayTemplateMessageDTO;
@@ -35,7 +36,7 @@ public class WeixiMessagePort implements IWeixinMessagePort {
     private final IWeixinApiService weixinApiService;
 
     @Override
-    public void sendPaySuccessTemplate(Map<String, String> info) throws IOException {
+    public void sendPaySuccessTemplate(PaySuccessMessageEvent.PaySuccessMessage paySuccessMessage) throws IOException {
         // 1. 获取 accessToken 【实际业务场景，按需处理下异常】
         String accessToken = weixinAccessToken.getIfPresent(appid);
         if (null == accessToken){
@@ -48,11 +49,11 @@ public class WeixiMessagePort implements IWeixinMessagePort {
 
         // 2. 发送模板消息
         Map<String, Map<String, String>> data = new HashMap<>();
-        WeixinTemplateMessageDTO.put(data, WeixinPayTemplateMessageDTO.TemplateKey.SUBJECT, info.get("productName"));
-        WeixinTemplateMessageDTO.put(data, WeixinPayTemplateMessageDTO.TemplateKey.AMOUNT, info.get("totalAmount"));
-        WeixinTemplateMessageDTO.put(data, WeixinPayTemplateMessageDTO.TemplateKey.PAYTIME, info.get("payTime"));
+        WeixinTemplateMessageDTO.put(data, WeixinPayTemplateMessageDTO.TemplateKey.SUBJECT, paySuccessMessage.getProductName());
+        WeixinTemplateMessageDTO.put(data, WeixinPayTemplateMessageDTO.TemplateKey.AMOUNT, paySuccessMessage.getTotalAmount());
+        WeixinTemplateMessageDTO.put(data, WeixinPayTemplateMessageDTO.TemplateKey.PAYTIME, paySuccessMessage.getPayTime());
 
-        WeixinTemplateMessageDTO templateMessageDTO = new WeixinPayTemplateMessageDTO(info.get("userId"), templateId);
+        WeixinTemplateMessageDTO templateMessageDTO = new WeixinPayTemplateMessageDTO(paySuccessMessage.getUserId(), templateId);
         templateMessageDTO.setUrl("http://yygqzzk.xyz");
         templateMessageDTO.setData(data);
 

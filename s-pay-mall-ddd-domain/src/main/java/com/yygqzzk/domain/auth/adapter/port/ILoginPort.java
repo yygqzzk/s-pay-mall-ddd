@@ -12,5 +12,4 @@ public interface ILoginPort {
 
 
     void sendLoginTemplate(String ticket, String openid) throws IOException;
-
 }

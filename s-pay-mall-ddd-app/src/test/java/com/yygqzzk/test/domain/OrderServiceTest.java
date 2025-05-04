@@ -44,6 +44,21 @@ public class OrderServiceTest {
     @Test
     public void test_createOrder() throws Exception {
         ShopCartEntity shopCartEntity = new ShopCartEntity();
+        shopCartEntity.setUserId("jgdf");
+        shopCartEntity.setProductId("9890001");
+        shopCartEntity.setTeamId(null);
+        shopCartEntity.setActivityId(100123L);
+        shopCartEntity.setMarketTypeVO(MarketTypeVO.GROUP_BUY_MARKET);
+
+        PayOrderEntity payOrderEntity = orderService.createOrder(shopCartEntity);
+
+        log.info("请求参数:{}", JSON.toJSONString(shopCartEntity));
+        log.info("测试结果:{}", JSON.toJSONString(payOrderEntity));
+    }
+
+    @Test
+    public void test_settlementOrder() throws Exception {
+        ShopCartEntity shopCartEntity = new ShopCartEntity();
         shopCartEntity.setUserId("zzk");
         shopCartEntity.setProductId("9890001");
         shopCartEntity.setTeamId(null);
@@ -55,6 +70,7 @@ public class OrderServiceTest {
         log.info("请求参数:{}", JSON.toJSONString(shopCartEntity));
         log.info("测试结果:{}", JSON.toJSONString(payOrderEntity));
     }
+
 
     @Test
     public void test_getOrder() throws Exception {

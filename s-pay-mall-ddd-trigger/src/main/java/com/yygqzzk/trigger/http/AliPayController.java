@@ -15,9 +15,11 @@ import com.yygqzzk.types.event.BaseEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+import xyz.yygqzzk.api.dto.NotifyRequestDTO;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -102,10 +104,27 @@ public class AliPayController implements IPayService {
         log.info("支付回调，买家付款时间: {}", params.get("gmt_payment"));
         log.info("支付回调，买家付款金额: {}", params.get("buyer_pay_amount"));
         log.info("支付回调，支付回调，更新订单 {}", tradeNo);
-        orderService.changeOrderPaySuccess(tradeNo);
-        orderService.sendOrderPaySuccessEvent(params);
+        orderService.changeOrderPaySuccess(tradeNo, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(params.get("gmt_payment")));
 
         return "success";
+    }
+
+
+    /* 拼团完成结算回调 */
+    @RequestMapping(value = "group_buy_notify", method = RequestMethod.POST)
+    @Override
+    public String groupBuyNotify(@RequestBody NotifyRequestDTO requestDTO) {
+        log.info("拼团回调，组队完成，结算开始 {}", JSON.toJSONString(requestDTO));
+        try {
+            // 营销结算
+            orderService.changeOrderMarketSettlement(requestDTO.getOutTradeNoList());
+
+            return "success";
+        } catch (Exception e) {
+            log.error("拼团回调，组队完成，结算失败 {}, {}", JSON.toJSONString(requestDTO), e.getMessage());
+
+            return "error";
+        }
     }
 }
 

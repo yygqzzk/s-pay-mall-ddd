@@ -46,6 +46,11 @@
             <groupId>com.alipay.sdk</groupId>
             <artifactId>alipay-sdk-java</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>xyz.yygqzzk</groupId>
+            <artifactId>group-buy-market-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

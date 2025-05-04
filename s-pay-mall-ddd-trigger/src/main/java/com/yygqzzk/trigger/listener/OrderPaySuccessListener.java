@@ -2,15 +2,14 @@ package com.yygqzzk.trigger.listener;
 
 import com.alibaba.fastjson2.JSON;
 import com.google.common.eventbus.Subscribe;
-import com.yygqzzk.domain.order.service.IWeixinMessageService;
-import com.yygqzzk.domain.order.service.impl.OrderService;
-import com.yygqzzk.types.event.BaseEvent;
+import com.yygqzzk.domain.goods.service.IGoodsService;
+import com.yygqzzk.domain.order.adapter.event.PaySuccessMessageEvent;
+import com.yygqzzk.domain.order.adapter.port.IWeixinMessagePort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.Map;
 
 /**
  * @author zzk
@@ -21,13 +20,23 @@ import java.util.Map;
 @Component
 public class OrderPaySuccessListener {
     @Resource
-    private IWeixinMessageService weixinMessageService;
+    private IWeixinMessagePort weixinMessagePort;
+    @Resource
+    private IGoodsService goodsService;
 
     @Subscribe
-    public void handleEvent(String paySuccessMessage) throws IOException {
-        log.info("收到支付成功消息，可以做接下来的事情，如；发货、充值、开户员、返利 {}", paySuccessMessage);
-        Map<String, String> msg = JSON.parseObject(paySuccessMessage, Map.class);
-        weixinMessageService.sendPaySuccessTemplate(msg);
+    public void handleEvent(String paySuccessMessageJson) throws IOException {
+        log.info("收到支付成功消息:{}", paySuccessMessageJson);
+        PaySuccessMessageEvent.PaySuccessMessage paySuccessMessage = JSON.parseObject(paySuccessMessageJson, PaySuccessMessageEvent.PaySuccessMessage.class);
+
+        log.info("模拟发货（如；发货、充值、开户员、返利），单号:{}", paySuccessMessage.getTradeNo());
+        /* 微信消息通知 */
+        weixinMessagePort.sendPaySuccessTemplate(paySuccessMessage);
+
+        // 变更订单状态 - 发货完成&结算
+        goodsService.changeOrderDealDone(paySuccessMessage.getTradeNo());
+
+
     }
 }
 

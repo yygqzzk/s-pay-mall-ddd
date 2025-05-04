@@ -29,4 +29,10 @@ public interface IOrderRepository {
     OrderEntity queryUnPayOrder(ShopCartEntity shopCartEntity);
 
     PayOrderEntity queryPayOrderByOrderId(String orderId);
+
+    OrderEntity queryOrderByOrderId(String orderId);
+
+    void changeMarketOrderPaySuccess(String orderId);
+
+    void changeOrderMarketSettlement(List<String> outTradeNoList);
 }

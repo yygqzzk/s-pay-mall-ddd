@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 
 /**
  * @author zzk
@@ -20,10 +21,9 @@ public class ProductRPC {
     public ProductDTO queryProductByProductId(String productId) {
         ProductDTO productDTO = new ProductDTO();
         productDTO.setProductId(productId);
-        productDTO.setProductName("美女程序员同款键盘");
-        productDTO.setProductDesc("美女程序员同款键盘");
-        productDTO.setPrice(new BigDecimal("9.99"));
-
+        productDTO.setProductName("MyBatisBook");
+        productDTO.setProductDesc("MyBatisBook");
+        productDTO.setPrice(new BigDecimal("100.00"));
         return productDTO;
     }
 }

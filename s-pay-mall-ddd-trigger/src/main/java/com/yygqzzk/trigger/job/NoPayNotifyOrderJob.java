@@ -10,6 +10,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,13 +41,14 @@ public class NoPayNotifyOrderJob {
                 AlipayTradeQueryResponse alipayTradeQueryResponse = alipayClient.execute(request);
                 String code = alipayTradeQueryResponse.getCode();
                 String tradeStatus = alipayTradeQueryResponse.getTradeStatus();
+                Date payTime = alipayTradeQueryResponse.getSendPayDate();
                 // 判断状态码
                 if ("10000".equals(code)) {
                     if ("TRADE_SUCCESS".equals(tradeStatus) || "TRADE_FINISHED".equals(tradeStatus)) {
                         // 支付成功才更新数据库状态
                         // 用来解决系统没有被正常回调的情况
                         log.info("任务:检测未接收到或未正确处理的支付订单 orderId : {}", orderId);
-                        orderService.changeOrderPaySuccess(orderId);
+                        orderService.changeOrderPaySuccess(orderId, payTime);
                     }
                 }
             }

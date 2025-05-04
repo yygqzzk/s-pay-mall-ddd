@@ -73,6 +73,33 @@ public class OrderRepository implements IOrderRepository {
     }
 
     @Override
+    public OrderEntity queryOrderByOrderId(String orderId) {
+        PayOrderEntity payOrderEntity = queryPayOrderByOrderId(orderId);
+        return OrderEntity.builder()
+                .userId(payOrderEntity.getUserId())
+                .orderId(payOrderEntity.getOrderId())
+                .payUrl(payOrderEntity.getPayUrl())
+                .marketType(payOrderEntity.getMarketType())
+                .marketDeductionAmount(payOrderEntity.getMarketDeductionAmount())
+                .payAmount(payOrderEntity.getPayAmount())
+                .build();
+    }
+
+    @Override
+    public void changeMarketOrderPaySuccess(String orderId) {
+        PayOrder payOrder = PayOrder.builder()
+                .orderId(orderId)
+                .status(OrderStatusVO.PAY_SUCCESS.getCode())
+                .build();
+        orderDao.changeOrderPaySuccess(payOrder);
+    }
+
+    @Override
+    public void changeOrderMarketSettlement(List<String> outTradeNoList) {
+        orderDao.changeOrderMarketSettlement(outTradeNoList);
+    }
+
+    @Override
     public void doSaveOrder(CreateOrderAggregate orderAggregate) {
         OrderEntity orderEntity = orderAggregate.getOrderEntity();
         ProductEntity productEntity = orderAggregate.getProductEntity();

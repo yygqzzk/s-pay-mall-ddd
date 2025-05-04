@@ -4,6 +4,7 @@ import com.yygqzzk.domain.order.model.entity.PayOrderEntity;
 import com.yygqzzk.domain.order.model.entity.ShopCartEntity;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +21,8 @@ public interface IOrderService {
      * 改变订单状态为已支付
      * @param orderId
      */
-    void changeOrderPaySuccess(String orderId);
+    void changeOrderPaySuccess(String orderId, Date payTime);
 
-    void sendOrderPaySuccessEvent(Map<String,String> params);
 
     List<String> queryNoPayNotifyOrder();
 
@@ -35,4 +35,5 @@ public interface IOrderService {
     boolean changeOrderClose(String orderId);
 
 
+    void changeOrderMarketSettlement(List<String> outTradeNoList);
 }

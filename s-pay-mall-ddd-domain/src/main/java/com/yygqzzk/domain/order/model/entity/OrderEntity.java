@@ -19,6 +19,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderEntity {
+    private String userId;
     private String productId;
     private String productName;
     private String orderId;

@@ -29,4 +29,8 @@ public interface IOrderDao {
     List<String> queryNoPayNotifyOrder();
 
     PayOrder queryByOrderId(String orderId);
+
+    void changeOrderMarketSettlement(List<String> outTradeNoList);
+
+    void changeOrderDealDone(String orderId);
 }
