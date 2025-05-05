@@ -10,6 +10,7 @@ import java.io.IOException;
 public interface ILoginPort {
     String createQrCodeTicket() throws Exception;
 
+    String createQrCodeTicket(String sceneStr) throws Exception;
 
     void sendLoginTemplate(String ticket, String openid) throws IOException;
 }

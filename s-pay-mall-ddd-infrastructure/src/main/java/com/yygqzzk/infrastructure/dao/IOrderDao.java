@@ -2,6 +2,7 @@ package com.yygqzzk.infrastructure.dao;
 
 import com.yygqzzk.infrastructure.dao.po.PayOrder;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
@@ -30,7 +31,7 @@ public interface IOrderDao {
 
     PayOrder queryByOrderId(String orderId);
 
-    void changeOrderMarketSettlement(List<String> outTradeNoList);
+    void changeOrderMarketSettlement(@Param("outTradeNoList") List<String> outTradeNoList);
 
     void changeOrderDealDone(String orderId);
 }

@@ -58,7 +58,7 @@ alipay:
   # 服务器异步通知页面路径
   notify_url: http://yygqzzk.natapp1.cc/api/v1/alipay/alipay_notify_url
   # 页面跳转同步通知页面路径
-  return_url: https://yygqzzk.xyz
+  return_url: https://github.com/yygqzzk
   # 支付宝网关地址
   gatewayUrl: https://openapi-sandbox.dl.alipaydev.com/gateway.do
 
