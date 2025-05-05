@@ -51,6 +51,7 @@ public class WeixiMessagePort implements IWeixinMessagePort {
         Map<String, Map<String, String>> data = new HashMap<>();
         WeixinTemplateMessageDTO.put(data, WeixinPayTemplateMessageDTO.TemplateKey.SUBJECT, paySuccessMessage.getProductName());
         WeixinTemplateMessageDTO.put(data, WeixinPayTemplateMessageDTO.TemplateKey.AMOUNT, paySuccessMessage.getTotalAmount());
+        WeixinTemplateMessageDTO.put(data, WeixinPayTemplateMessageDTO.TemplateKey.TYPE, "0".equals(paySuccessMessage.getMarketType()) ? "单独购买" : "拼团购买");
         WeixinTemplateMessageDTO.put(data, WeixinPayTemplateMessageDTO.TemplateKey.PAYTIME, paySuccessMessage.getPayTime());
 
         WeixinTemplateMessageDTO templateMessageDTO = new WeixinPayTemplateMessageDTO(paySuccessMessage.getUserId(), templateId);

@@ -41,7 +41,6 @@ public class LoginController implements IAuthService {
     public Response<String> weixinQrCodeTicket() {
         try {
             String qrCodeTicket = loginService.createQrCodeTicket();
-            loginService.saveLoginIpinfo(qrCodeTicket, request.getRemoteAddr());
             log.info("生成微信扫码登录 ticket: {}", qrCodeTicket);
             return Response.<String>builder()
                     .code(Constants.ResponseCode.SUCCESS.getCode())
@@ -68,8 +67,13 @@ public class LoginController implements IAuthService {
     public Response<String> checkLogin(String ticket) {
         try {
             String openId = loginService.checkLogin(ticket);
+
             log.info("扫码检测登录结果 ticket: {} openId: {}", ticket, openId);
             if(StringUtils.isNotBlank(openId)) {
+                log.info("用户登录ip: {}", request.getRemoteAddr());
+                loginService.saveLoginIpinfo(openId, request.getRemoteAddr());
+                loginService.sendLoginTemplate(ticket, openId);
+
                 return Response.<String>builder()
                         .code(Constants.ResponseCode.SUCCESS.getCode())
                         .info(Constants.ResponseCode.SUCCESS.getInfo())

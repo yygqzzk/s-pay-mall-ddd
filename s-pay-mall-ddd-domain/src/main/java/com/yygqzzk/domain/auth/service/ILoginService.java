@@ -15,8 +15,8 @@ public interface ILoginService {
 
     void saveLoginState(String ticket, String openid) throws IOException;
 
-    void saveLoginIpinfo(String ticket, String ip) throws IOException;
+    void saveLoginIpinfo(String openId, String ip) throws IOException;
 
-
+    void sendLoginTemplate(String ticket, String openid) throws IOException;
 
 }

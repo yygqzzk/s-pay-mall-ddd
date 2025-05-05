@@ -44,6 +44,7 @@ public class WeixinPayTemplateMessageDTO extends WeixinTemplateMessageDTO {
     public enum TemplateKey {
         SUBJECT("subject","商品名称"),
         AMOUNT("amount", "支付金额"),
+        TYPE("type", "购买方式"),
         PAYTIME("payTime", "支付时间");
 
 

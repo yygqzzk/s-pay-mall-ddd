@@ -41,6 +41,7 @@ public class PaySuccessMessageEvent extends BaseEvent<PaySuccessMessageEvent.Pay
         private String userId;
         private String tradeNo;
         private String productName;
+        private String marketType;
         private String totalAmount;
         private String payTime;
     }

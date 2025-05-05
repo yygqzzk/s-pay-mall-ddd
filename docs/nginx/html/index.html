@@ -1,123 +1,241 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>商品下单支付页</title>
-    <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #f7f7f7;
-        text-align: center; /* 添加居中对齐 */
-    }
-    .container {
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .product-info {
-        margin-bottom: 20px;
-        border: 1px solid #ddd; /* 添加边框 */
-        padding: 10px; /* 添加内边距 */
-        text-align: center; /* 添加居中对齐 */
-    }
-    .product-info h2 {
-        margin: 0;
-        margin-bottom: 5px;
-    }
-    .product-info p {
-        font-size: 36px; /* 加大字体 */
-        font-weight: bold; /* 加粗字体 */
-        color: red; /* 字体颜色改为红色 */
-        margin: 0; /* 移除默认的margin */
-        margin-top: 20px;
-    }
-    .order-button {
-        display: block;
-        width: calc(100% - 40px); /* 减去padding的宽度 */
-        padding: 10px;
-        margin: 10px auto; /* 添加自动外边距实现居中 */
-        font-size: 16px;
-        color: #fff;
-        background-color: #007bff;
-        border: none;
-        cursor: pointer;
-        border-radius: 20px; /* 添加圆角 */
-    }
-    .order-button:hover {
-        background-color: #0056b3;
-    }
-    .account-info {
-        font-size: 12px; /* 设置字体大小为9号 */
-        text-align: center; /* 居中对齐 */
-        display: block; /* 使span表现得像块级元素 */
-        margin: 10px 0; /* 添加上下外边距 */
-    }
-</style>
+    <title>拼团项目 - 商品详情页</title>
+    <link rel="stylesheet" href="css/index.css">
+
+    <!-- Element UI 样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <!-- Vue（Element UI依赖） -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <!-- Element UI -->
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
 </head>
 <body>
-<div class="container">
-    <div class="product-info">
-        <h2>美女程序员 - 同款机械键盘</h2>
 
-        <img width="350" src="images/sku-keyboard-001.png"/>
-        <p>价格：¥9.99</p>
+<!-- 轮播图 -->
+<div class="swiper-container">
+    <div class="swiper-wrapper">
+        <div class="swiper-slide"><img src="./images/sku-13811216-01.png"></div>
+        <div class="swiper-slide"><img src="./images/sku-13811216-02.png"></div>
+        <div class="swiper-slide"><img src="./images/sku-13811216-03.png"></div>
     </div>
-    <button id="orderButton" class="order-button">立即下单「沙箱支付」</button>
-    <span class="account-info">测试账号：kvhmoj3832@sandbox.com 密码：111111 支付：111111</span>
+    <div class="swiper-pagination"></div>
 </div>
 
+<!-- 商品信息 -->
+<div class="product-info">
+    <h1 class="product-title">手写MyBatis：渐进式源码实践（全彩）</h1>
+    <span class="promotion-tag">大促优惠</span>
+    <span class="promotion-text"></span>
+</div>
+
+<!-- 拼单列表容器 -->
+<div class="group-list"></div>
+<div class="area"></div>
+
+<!-- 底部操作栏 -->
+<div class="action-bar">
+    <button class="action-btn buy-alone"></button>
+    <button class="action-btn group-buy"></button>
+</div>
+
+<script src="js/index.js"></script>
 <script>
-function getCookie(name) {
-    let cookieArr = document.cookie.split(";");
-    for(let i = 0; i < cookieArr.length; i++) {
-        let cookiePair = cookieArr[i].split("=");
-        if(name == cookiePair[0].trim()) {
-            return decodeURIComponent(cookiePair[1]);
-        }
+    function showPaymentConfirm(price) {
+        const overlay = document.createElement('div');
+        overlay.className = 'payment-overlay';
+
+        const modal = document.createElement('div');
+        modal.className = 'payment-modal';
+        modal.innerHTML = `
+      <h3>支付确认</h3>
+      <p>商品金额：￥${price}</p>
+      <p>买家账号：<span class="copyable" data-copy="nagsao4724@sandbox.com">nagsao4724@sandbox.com</span></p>
+      <p>登录密码：111111</p>
+      <p>支付密码：111111</p>
+      <div class="modal-buttons">
+          <button class="confirm-btn">确认支付</button>
+          <button class="cancel-btn">取消支付</button>
+      </div>
+  `;
+
+        modal.querySelector('.confirm-btn').addEventListener('click', function () {
+            const form = document.querySelector('form');
+            if (form) form.submit();
+            overlay.remove();
+        });
+
+        modal.querySelector('.cancel-btn').addEventListener('click', function () {
+            document.querySelectorAll('form').forEach(form => form.remove());
+            overlay.remove();
+        });
+
+        modal.querySelector('.copyable').addEventListener('click', function () {
+            const textToCopy = this.getAttribute('data-copy');
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                alert('买家账号已复制到剪贴板');
+            }).catch(err => {
+                ELEMENT.Message.error('复制失败：' + err.message);
+            });
+        });
+
+        overlay.appendChild(modal);
+        document.body.appendChild(overlay);
     }
-    return null;
-}
 
-document.getElementById('orderButton').addEventListener('click', function() {
-    var userId = getCookie("loginToken");
-    if (!userId) {
-        window.location.href = "login.html"; // 跳转到登录页
-        return;
-    }
-
-    var productId = "100010090091";
-    var url = 'http://yygqzzk.natapp1.cc/api/v1/alipay/create_pay_order';
-
-    var requestBody = {
-        userId: userId,
-        productId: productId
-    };
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(requestBody) // 将请求体转换为JSON字符串
-    })
-    .then(response => response.json()) // 解析JSON格式的响应
-    .then(json => {
-        if (json.code === "0000") { // 假设成功的code是"0000"
-            var formHtml = json.data; // 获取data字段中的HTML表单字符串
-            document.body.innerHTML += formHtml; // 将表单添加到页面上
-            document.forms[0].submit(); // 自动提交表单
+    function obfuscateUserId(userId) {
+        if (userId.length <= 4) {
+            return userId;
         } else {
-            console.error('Error:', json.info); // 输出错误信息
+            const start = userId.slice(0, 2);
+            const end = userId.slice(-2);
+            const middle = '*'.repeat(userId.length - 4);
+            return `${start}${middle}${end}`;
         }
-    })
-    .catch(error => console.error('Error:', error));
-});
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        var sPayMallUrl = "http://127.0.0.1:8080";
+        var groupBuyMarketUrl = "http://127.0.0.1:8090";
+        var goodsId = "9890001";
+
+        var userId = getCookie("loginToken");
+        if (!userId) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        fetch(groupBuyMarketUrl + '/api/v1/gbm/index/query_group_buy_market_config', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                userId: userId,
+                source: "s01",
+                channel: "c01",
+                goodsId: goodsId
+            })
+        })
+            .then(response => response.json())
+            .then(res => {
+                if (res.code !== '0000') {
+                    ELEMENT.Message.error('加载失败：' + (res.info || '未知错误'));
+                    return;
+                }
+
+                const { activityId, goods, teamList, teamStatistic } = res.data;
+                const groupList = document.querySelector('.group-list');
+                const promotionText = document.querySelector('.promotion-text');
+
+                promotionText.textContent = `直降 ¥${goods.deductionPrice.toFixed(0)}，${teamStatistic.allTeamUserCount}人再抢，参与马上抢到`;
+
+                groupList.innerHTML = '';
+
+                if (teamList.length === 0) {
+                    groupList.innerHTML = `
+          <div class="group-item empty-tips">
+              <div class="tips-content">
+                  小伙伴，赶紧去开团吧，做村里最靓的仔！🎉
+              </div>
+          </div>`;
+                } else {
+                    teamList.forEach(team => {
+                        const remaining = team.targetCount - team.lockCount;
+                        groupList.innerHTML += `
+            <div class="group-item">
+                <div>
+                    <div class="user-info" data-teamId="${team.teamId}" data-activityId="${team.activityId}">${obfuscateUserId(team.userId)}</div>
+                    <div class="group-status">
+                        <span>组队仅剩${remaining}人，拼单即将结束</span>
+                        <span class="countdown">${team.validTimeCountdown}</span>
+                    </div>
+                </div>
+                <div class="right">
+                    <button class="group-btn" data-price="${goods.payPrice.toFixed(0)}">参与拼团</button>
+                </div>
+            </div>`;
+                    });
+                }
+
+                const buyAloneBtn = document.querySelector('.buy-alone');
+                const groupBuyBtn = document.querySelector('.group-buy');
+                buyAloneBtn.textContent = `单独购买(￥${goods.originalPrice.toFixed(0)})`;
+                buyAloneBtn.dataset.price = goods.originalPrice;
+                groupBuyBtn.textContent = `开团购买(￥${goods.payPrice.toFixed(0)})`;
+                groupBuyBtn.dataset.price = goods.payPrice;
+
+                document.querySelectorAll('.group-btn, .group-buy').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const price = this.dataset.price;
+                        let teamId = null;
+                        if (this.classList.contains('group-btn')) {
+                            const groupItem = this.closest('.group-item');
+                            const userInfo = groupItem.querySelector('.user-info');
+                            teamId = userInfo.dataset.teamid;
+                        }
+
+                        const requestBody = {
+                            userId: userId,
+                            productId: goods.goodsId,
+                            teamId: teamId,
+                            activityId: activityId,
+                            marketType: 1
+                        };
+
+                        fetch(sPayMallUrl + '/api/v1/alipay/create_pay_order', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestBody)
+                        })
+                            .then(response => response.json())
+                            .then(json => {
+                                if (json.code === "0000") {
+                                    document.querySelectorAll('form').forEach(form => form.remove());
+                                    document.body.insertAdjacentHTML('beforeend', json.data);
+                                    showPaymentConfirm(goods.payPrice);
+                                } else {
+                                    ELEMENT.Message.error('支付失败：' + (json.info || '未知错误'));
+                                }
+                            })
+                            .catch(error => ELEMENT.Message.error('网络错误：' + error.message));
+                    });
+                });
+
+                document.querySelectorAll('.buy-alone').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        const requestBody = {
+                            userId: userId,
+                            productId: goods.goodsId,
+                            marketType: 0
+                        };
+
+                        fetch(sPayMallUrl + '/api/v1/alipay/create_pay_order', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(requestBody)
+                        })
+                            .then(response => response.json())
+                            .then(json => {
+                                if (json.code === "0000") {
+                                    document.querySelectorAll('form').forEach(form => form.remove());
+                                    document.body.insertAdjacentHTML('beforeend', json.data);
+                                    showPaymentConfirm(goods.payPrice);
+                                } else {
+                                    ELEMENT.Message.error('支付失败：' + (json.info || '未知错误'));
+                                }
+                            })
+                            .catch(error => ELEMENT.Message.error('网络错误：' + error.message));
+                    });
+                });
+
+                document.querySelectorAll('.countdown').forEach(el => {
+                    new Countdown(el, el.textContent);
+                });
+            })
+            .catch(err => ELEMENT.Message.error('加载失败：' + err.message));
+    });
 </script>
 </body>
 </html>
-

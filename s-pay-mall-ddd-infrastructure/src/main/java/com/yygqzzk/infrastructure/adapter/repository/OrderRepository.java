@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Date;
@@ -74,14 +75,18 @@ public class OrderRepository implements IOrderRepository {
 
     @Override
     public OrderEntity queryOrderByOrderId(String orderId) {
-        PayOrderEntity payOrderEntity = queryPayOrderByOrderId(orderId);
-        return OrderEntity.builder()
-                .userId(payOrderEntity.getUserId())
-                .orderId(payOrderEntity.getOrderId())
-                .payUrl(payOrderEntity.getPayUrl())
-                .marketType(payOrderEntity.getMarketType())
-                .marketDeductionAmount(payOrderEntity.getMarketDeductionAmount())
-                .payAmount(payOrderEntity.getPayAmount())
+        PayOrder payOrder = orderDao.queryByOrderId(orderId);
+        return  OrderEntity.builder()
+                .userId(payOrder.getUserId())
+                .productId(payOrder.getProductId())
+                .productName(payOrder.getProductName())
+                .orderId(payOrder.getOrderId())
+                .orderTime(payOrder.getOrderTime())
+                .totalAmount(payOrder.getTotalAmount())
+                .payUrl(payOrder.getPayUrl())
+                .marketType(payOrder.getMarketType())
+                .marketDeductionAmount(payOrder.getMarketDeductionAmount())
+                .payAmount(payOrder.getPayAmount())
                 .build();
     }
 

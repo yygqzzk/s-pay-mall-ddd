@@ -18,10 +18,12 @@ import com.yygqzzk.domain.order.model.valobj.OrderStatusVO;
 import com.yygqzzk.domain.order.service.AbstractOrderService;
 import com.yygqzzk.domain.order.service.IAlipayService;
 import com.yygqzzk.types.event.BaseEvent;
+import com.yygqzzk.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,19 +42,16 @@ public class OrderService extends AbstractOrderService {
     private String notifyUrl;
     @Value("${alipay.return_url}")
     private String returnUrl;
+    @Resource
+    protected  AlipayClient alipayClient;
+    @Resource
+    protected  IProductPort port;
 
-    protected final AlipayClient alipayClient;
-    protected final IProductPort port;
 
-    public OrderService(IAlipayService alipayService, IProductPort productPort, IOrderRepository orderRepository, PaySuccessMessageEvent paySuccessMessageEvent, EventBus eventBus, AlipayClient alipayClient, IProductPort port) {
-        super(alipayService, productPort, orderRepository, paySuccessMessageEvent, eventBus);
-        this.alipayClient = alipayClient;
-        this.port = port;
-    }
 
 
     @Override
-    protected MarketPayDiscountEntity lockMarketPayOrder(String userId, String teamId, Long activityId, String productId, String orderId) {
+    protected MarketPayDiscountEntity lockMarketPayOrder(String userId, String teamId, Long activityId, String productId, String orderId) throws AppException {
         return port.lockMarketPayOrder(userId, teamId, activityId, productId, orderId);
     }
 
@@ -135,6 +134,7 @@ public class OrderService extends AbstractOrderService {
                 .tradeNo(orderEntity.getOrderId())
                 .payTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(payTime))
                 .productName(orderEntity.getProductName())
+                .marketType(orderEntity.getMarketType().toString())
                 .totalAmount(orderEntity.getPayAmount().toString())
                 .build());
         PaySuccessMessageEvent.PaySuccessMessage paySuccessMessage = eventMessage.getData();

@@ -14,7 +14,7 @@ import javax.annotation.Resource;
 
 public interface IPayService {
 
-    public Response<String> createPayOrder(CreatePayRequestDTO createPayRequestDTO);
+    public Response<String> createPayOrder(CreatePayRequestDTO createPayRequestDTO) throws Exception;
 
     /**
      * 拼团结算回调

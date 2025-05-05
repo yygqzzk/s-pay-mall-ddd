@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * @author zzk
@@ -36,4 +37,5 @@ public interface IOrderService {
 
 
     void changeOrderMarketSettlement(List<String> outTradeNoList);
+
 }

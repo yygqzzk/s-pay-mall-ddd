@@ -9,9 +9,11 @@ import com.yygqzzk.api.response.Response;
 import com.yygqzzk.domain.order.adapter.event.PaySuccessMessageEvent;
 import com.yygqzzk.domain.order.model.entity.PayOrderEntity;
 import com.yygqzzk.domain.order.model.entity.ShopCartEntity;
+import com.yygqzzk.domain.order.model.valobj.MarketTypeVO;
 import com.yygqzzk.domain.order.service.IOrderService;
 import com.yygqzzk.types.common.Constants;
 import com.yygqzzk.types.event.BaseEvent;
+import com.yygqzzk.types.exception.AppException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -41,31 +43,28 @@ public class AliPayController implements IPayService {
     private IOrderService orderService;
 
 
-    @RequestMapping(value = "create_pay_order", method =  RequestMethod.POST)
+    @RequestMapping(value = "create_pay_order", method = RequestMethod.POST)
     @Override
-    public Response<String> createPayOrder(@RequestBody CreatePayRequestDTO createPayRequestDTO) {
-        try {
-            log.info("商品下单，根据商品ID创建支付单开始 userId:{} productId:{}", createPayRequestDTO.getUserId(), createPayRequestDTO.getUserId());
-            String userId = createPayRequestDTO.getUserId();
-            String productId = createPayRequestDTO.getProductId();
-            // 下单
-            PayOrderEntity payOrderEntity = orderService.createOrder(ShopCartEntity.builder()
-                    .userId(userId)
-                    .productId(productId)
-                    .build());
-            log.info("商品下单，支付订单创建完成 userId:{} productId:{}", createPayRequestDTO.getUserId(), createPayRequestDTO.getUserId());
-            return Response.<String>builder()
-                    .code(Constants.ResponseCode.SUCCESS.getCode())
-                    .info(Constants.ResponseCode.SUCCESS.getInfo())
-                    .data(payOrderEntity.getPayUrl())
-                    .build();
-        } catch (Exception e) {
-            log.error("商品下单，根据商品ID创建支付单失败 userId:{} productId:{}", createPayRequestDTO.getUserId(), createPayRequestDTO.getUserId(), e);
-            return Response.<String>builder()
-                    .code(Constants.ResponseCode.UN_ERROR.getCode())
-                    .info(Constants.ResponseCode.UN_ERROR.getInfo())
-                    .build();
-        }
+    public Response<String> createPayOrder(@RequestBody CreatePayRequestDTO createPayRequestDTO) throws Exception {
+        log.info("商品下单，根据商品ID创建支付单开始 userId:{} productId:{}", createPayRequestDTO.getUserId(), createPayRequestDTO.getUserId());
+        String userId = createPayRequestDTO.getUserId();
+        String productId = createPayRequestDTO.getProductId();
+        Long activityId = createPayRequestDTO.getActivityId();
+        // 下单
+        PayOrderEntity payOrderEntity = orderService.createOrder(ShopCartEntity.builder()
+                .activityId(activityId)
+                .userId(userId)
+                .productId(productId)
+                .marketTypeVO(MarketTypeVO.valueOf(createPayRequestDTO.getMarketType()))
+                .teamId(createPayRequestDTO.getTeamId())
+                .build());
+        log.info("商品下单，支付订单创建完成 userId:{} productId:{}", createPayRequestDTO.getUserId(), createPayRequestDTO.getUserId());
+        return Response.<String>builder()
+                .code(Constants.ResponseCode.SUCCESS.getCode())
+                .info(Constants.ResponseCode.SUCCESS.getInfo())
+                .data(payOrderEntity.getPayUrl())
+                .build();
+
     }
 
     @RequestMapping(value = "alipay_notify_url", method = RequestMethod.POST)
@@ -118,11 +117,9 @@ public class AliPayController implements IPayService {
         try {
             // 营销结算
             orderService.changeOrderMarketSettlement(requestDTO.getOutTradeNoList());
-
             return "success";
         } catch (Exception e) {
             log.error("拼团回调，组队完成，结算失败 {}, {}", JSON.toJSONString(requestDTO), e.getMessage());
-
             return "error";
         }
     }

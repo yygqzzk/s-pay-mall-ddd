@@ -42,12 +42,18 @@ public class WeixinLoginServiceImpl implements ILoginService {
     @Override
     public void saveLoginState(String ticket, String openid) throws IOException {
         openidToken.put(ticket, openid);
-        loginPort.sendLoginTemplate(ticket, openid);
+        // TODO
+//        loginPort.sendLoginTemplate(ticket, openid);
     }
 
     @Override
-    public void saveLoginIpinfo(String ticket, String ip) throws IOException {
-        loginIp.put(ticket, ip);
+    public void saveLoginIpinfo(String openId, String ip) throws IOException {
+        loginIp.put(openId, ip);
+    }
+
+    @Override
+    public void sendLoginTemplate(String ticket, String openid) throws IOException {
+        loginPort.sendLoginTemplate(ticket, openid);
     }
 
 }

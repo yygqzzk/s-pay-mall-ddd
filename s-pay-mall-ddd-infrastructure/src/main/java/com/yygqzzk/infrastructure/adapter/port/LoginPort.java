@@ -101,7 +101,7 @@ public class LoginPort implements ILoginPort {
         // 登录网址
         WeixinLoginTemplateMessageDTO.put(data, WeixinLoginTemplateMessageDTO.TemplateKey.HOST, "yygqzzk.xyz");
         // 添加用户登录IP信息
-        String ip = loginIp.getIfPresent(ticket);
+        String ip = loginIp.getIfPresent(openid);
         WeixinLoginTemplateMessageDTO.put(data, WeixinLoginTemplateMessageDTO.TemplateKey.IP, ip);
         // 添加登录IP地址地点信息
         IPInfo ipInfo = IPInfoUtils.getIpInfo(ip);

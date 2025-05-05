@@ -21,6 +21,7 @@ import xyz.yygqzzk.api.dto.SettlementMarketPayOrderRequestDTO;
 import xyz.yygqzzk.api.dto.SettlementMarketPayOrderResponseDTO;
 import xyz.yygqzzk.api.response.Response;
 
+import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -57,7 +58,7 @@ public class ProductPort implements IProductPort {
     }
 
     @Override
-    public MarketPayDiscountEntity lockMarketPayOrder(String userId, String teamId, Long activityId, String productId, String orderId) {
+    public MarketPayDiscountEntity lockMarketPayOrder(String userId, String teamId, Long activityId, String productId, String orderId) throws AppException {
         // 请求参数
         LockMarketPayOrderRequestDTO requestDTO = new LockMarketPayOrderRequestDTO();
         requestDTO.setUserId(userId);
@@ -69,32 +70,36 @@ public class ProductPort implements IProductPort {
         requestDTO.setOutTradeNo(orderId);
         requestDTO.setNotifyUrl(notifyUrl);
 
+
+        // 营销锁单
+        Call<Response<LockMarketPayOrderResponseDTO>> call = groupBuyMarketService.lockMarketPayOrder(requestDTO);
+
+        // 获取结果
+        Response<LockMarketPayOrderResponseDTO> response = null;
         try {
-            // 营销锁单
-            Call<Response<LockMarketPayOrderResponseDTO>> call = groupBuyMarketService.lockMarketPayOrder(requestDTO);
-
-            // 获取结果
-            Response<LockMarketPayOrderResponseDTO> response = call.execute().body();
-            log.info("营销锁单{} requestDTO:{} responseDTO:{}", userId, JSON.toJSONString(requestDTO), JSON.toJSONString(response));
-            if (null == response) return null;
-
-            // 异常判断
-            if (!"0000".equals(response.getCode())){
-                throw new AppException(response.getCode(), response.getInfo());
-            }
-
-            LockMarketPayOrderResponseDTO responseDTO = response.getData();
-
-            // 获取拼团优惠
-            return MarketPayDiscountEntity.builder()
-                    .originalPrice(responseDTO.getOriginalPrice())
-                    .deductionPrice(responseDTO.getDeductionPrice())
-                    .payPrice(responseDTO.getPayPrice())
-                    .build();
-        } catch (Exception e) {
-            log.error("营销锁单失败{}", userId, e);
-            return null;
+            response = call.execute().body();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
+        log.info("营销锁单{} requestDTO:{} responseDTO:{}", userId, JSON.toJSONString(requestDTO), JSON.toJSONString(response));
+        if (null == response) return null;
+
+        // 异常判断
+        if (!"0000".equals(response.getCode())) {
+            log.error("锁单失败: {}", response.getInfo());
+            throw new AppException(response.getCode(), response.getInfo());
+        }
+
+        LockMarketPayOrderResponseDTO responseDTO = response.getData();
+
+        // 获取拼团优惠
+        return MarketPayDiscountEntity.builder()
+                .originalPrice(responseDTO.getOriginalPrice())
+                .deductionPrice(responseDTO.getDeductionPrice())
+                .payPrice(responseDTO.getPayPrice())
+                .build();
+
+
     }
 
     @Override
